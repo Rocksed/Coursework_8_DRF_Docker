@@ -35,8 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'atomic_habits',
     'users',
-    'atomic_habits'
     'rest_framework'
 ]
 
@@ -84,7 +84,9 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'coursework',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        'NAME': 'Coursework',
         'USER': 'postgres',
         'PASSWORD': '1003',
     }
