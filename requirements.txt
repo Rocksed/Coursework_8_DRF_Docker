@@ -3,3 +3,11 @@ psycopg2-binary
 djangorestframework-simplejwt
 djangorestframework
 pillow
+drf-yasg
+coverage
+django-cors-headers
+python-telegram-bot
+celery
+redis
+python-dotenv
+
