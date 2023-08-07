@@ -10,4 +10,4 @@ python-telegram-bot
 celery
 redis
 python-dotenv
-
+django-celery-beat

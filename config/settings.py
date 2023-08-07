@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'atomic_habits',
     'users',
     'rest_framework',
+    'django_celery_beat',
     'corsheaders',
     'drf_yasg'
 ]
@@ -150,3 +152,19 @@ CORS_ALLOWED_ORIGINS = [
 # Настройки Celery
 CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Измените URL брокера, если используете другое хранилище
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+CELERY_IMPORTS = ('atomic_habits.tasks',)
+CELERY_TASK_CONCURRENCY = 1
+
+# Настройка сериализатор для задач
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+CELERY_BEAT_SCHEDULE = {
+    'send-notifications': {
+        'task': 'atomic_habits.tasks.send_notifications',
+        'schedule': crontab(minute=10, hour=12),  # Установите расписание отправки уведомлений
+    },
+}
