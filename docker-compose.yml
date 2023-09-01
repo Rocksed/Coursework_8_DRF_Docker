@@ -4,8 +4,6 @@ services:
   db:
     image: postgres:14-alpine3.17
     container_name: db_app
-    environment:
-      - POSTGRES_PASSWORD=password
     env_file:
       - .env
     volumes:
@@ -13,7 +11,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -22,29 +20,16 @@ services:
   redis:
     image: redis:latest
     container_name: redis_app
-    command: redis-server --save 20 1 --loglevel warning
+    command: redis-server --save 20 1
     ports:
       - "6379:6379"
     volumes:
       - ./data/cache:/data
 
-  celery:
-    build:
-      context: .
-      dockerfile: docker_celery/Dockerfile
-    command: celery -A Coursework_8_DRF_Docker worker -l info
-    volumes:
-      - .:/code
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_started
-
   app:
     build:
       context: .
-      dockerfile: docker_django/Dockerfile
+      dockerfile: Dockerfile
     network_mode: host
     image: app
     container_name: drf
@@ -60,3 +45,17 @@ services:
     volumes:
       - .:/code
     command: python manage.py runserver 0.0.0.0:8000
+
+
+  celery:
+    build:
+      context: .
+    entrypoint: celery
+    command: -A celery.app worker
+    volumes:
+      - .:/code
+    links:
+      - redis
+    depends_on:
+      - redis
+

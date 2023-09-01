@@ -13,11 +13,12 @@ import os
 from pathlib import Path
 
 from celery.schedules import crontab
-from dotenv import load_dotenv
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / '.env')
+
+env = environ.Env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -92,11 +93,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT', default='5432'),
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'NAME': env.str('POSTGRES_DB'),
+        'HOST': env.str('POSTGRES_HOST'),
+        'PORT': env.str('POSTGRES_PORT'),
+        'USER': env.str('POSTGRES_USER'),
+        'PASSWORD': env.str('POSTGRES_PASSWORD'),
     }
 }
 
@@ -151,7 +152,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 # Настройки Celery
-CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Измените URL брокера, если используете другое хранилище
+CELERY_BROKER_URL = env('CELERY_BROKER_URL')  # Измените URL брокера, если используете другое хранилище
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 CELERY_IMPORTS = ('atomic_habits.tasks',)
